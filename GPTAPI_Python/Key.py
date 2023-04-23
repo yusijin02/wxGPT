@@ -1,0 +1,14 @@
+Key = [
+    "rnwtKXzRrIMxO2W8Lq3Nf1sD6vubZpUdEJl9cgyP0oV5BjCAh7ieQS4YaT",
+    "GR0J69bhDtn8g1c5LQXaSYKjxpvMWPykwIsZNUuB7VefFEmzH4dAoOTCq2lVi3",
+    "y59d7V8G4cHvlWhJqrASszZuBQKRXOF3MxNf1mjoatpEiTn0bUPkYw2iC6LDe",
+    "2kJ8PH1OceX9NY0nKpiyW43FzsbLwGh5DZlUTgjmqfRo7MVtuvECxaA6QBdS",
+    "Nx8KjwIQ2Yn0Z47HtskD6umhaUybTJS9Rr1vEOLWzgAP3fMlVipCeBXoc5G",
+    "8jKgJiHX0htxvGz6OwcNlY1ksQPy2epoLZnAmufWdM9RrDSE7TbI3VBq5F4aU",
+    "1C6KYsZo8WUluGq3D9V7fbhSvNx5PnRwL4ABaMpTIm2QJ0EtrjXzHgkeiyO",
+    "M36yVhJ5CtLZf7GnHvBkr0d8lPRwTz1sujOYIeK9SAibXqxN2aQUpc4oDmWE",
+    "vS2QFAYzJiuRdcO60W7XpxLZG3f4V81mBtKjNglwEPHeTn5aUMybkshr9o",
+    "u04xq3mh27fZlBnL8WStvDjyI1GowYsKXaiH9brTgJVNP6k5CeFQApEzROU",
+]
+
+Api_Key = "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"
