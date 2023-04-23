@@ -6,7 +6,7 @@
 
 请注意根目录下**每个文件夹是一个独立的项目**。
 
-- `/GPTAPI` ==**已停止维护!!!**==
+- `/GPTAPI(STOP-SUPPORT)` ==**已停止维护!!!**==
 
   是运行在北美服务器端的 ASP.NET Core WebAPI 项目。==**已停止服务!!!**==
   
@@ -18,3 +18,8 @@
 
   使用 Python 为后端语言, 运行在 Ubuntu Server 20.04 LTS 64位才做系统.
 
+
+
+#### 开发文档
+
+- API 文档 [/docs/API.md](./docs/API.md)
