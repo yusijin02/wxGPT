@@ -19,6 +19,7 @@ def ChatGPT(request):
     # -------提交参数---------
     model = request.GET.get('model')
     messages = request.GET.get('messages')
+    max_tokens = request.GET.get('max_tokens')
 
 
 
@@ -65,13 +66,25 @@ def ChatGPT(request):
             'res': {},
         }
         return JsonResponse(result)
+    if not (max_tokens is None):
+        try:
+            max_tokens = int(max_tokens)
+        except Exception:
+            result = {
+                'code': '402',
+                'state': 'max_token must be int',
+                'res': {},
+            }
+            return JsonResponse(result)
+
     try:
         openai.api_key = Key.Api_Key
-        res = openai.Completion.create(
+        res = openai.ChatCompletion.create(
             model=model,
             messages=eval(messages),
+            max_tokens=max_tokens,
         )
-        res_dict = json.loads(res)
+        res_dict = dict(res)
         result = {
             'code': '200',
             'state': 'successful',

@@ -10,11 +10,11 @@ import Key
 def ChatGPT_test(request):
     try:
         openai.api_key = Key.Api_Key
-        res = openai.Completion.create(
+        res = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{'role': 'user', 'content': '请介绍你自己'}]
         )
-        res_dict = json.loads(res)
+        res_dict = dict(res)
         result = {
             'code': '200',
             'state': 'successful',

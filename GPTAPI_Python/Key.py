@@ -11,4 +11,4 @@ Key = [
     "u04xq3mh27fZlBnL8WStvDjyI1GowYsKXaiH9brTgJVNP6k5CeFQApEzROU",
 ]
 
-Api_Key = "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"
+Api_Key = "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"
