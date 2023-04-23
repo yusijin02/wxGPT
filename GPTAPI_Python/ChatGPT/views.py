@@ -11,6 +11,7 @@ def ChatGPT(request):
     # -------安全校验---------
     # 时间戳
     t = request.GET.get('t')
+    t = float(t)
     # 加密参数
     s = request.GET.get('s')
     # 用户参数
@@ -47,7 +48,7 @@ def ChatGPT(request):
             'res': {},
         }
         return JsonResponse(result)
-    string = k + t
+    string = k + str(t)
     hash_object = hashlib.sha256()
     hash_object.update(string.encode())
     hash_value = hash_object.hexdigest()
