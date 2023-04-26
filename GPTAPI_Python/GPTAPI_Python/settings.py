@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'demo.apps.DemoConfig',
     'ChatGPT.apps.ChatgptConfig',
     'ChatGPT_test.apps.ChatgptTestConfig',
+    'ChatGPT_post.apps.ChatgptPostConfig'
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 禁用CSRF Cookie安全性要求
+CSRF_COOKIE_SECURE = False
+
+# 禁用Session Cookie安全性要求
+SESSION_COOKIE_SECURE = False
+
+# 禁用SSL重定向
+SECURE_SSL_REDIRECT = False
+
+# 禁用CSRF保护机制
+CSRF_USE_SESSIONS = True
+
+APPEND_SLASH = False

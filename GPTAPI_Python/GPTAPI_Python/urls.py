@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/', include('demo.urls')),
     path('api/', include('ChatGPT.urls')),
     path('api/', include('ChatGPT_test.urls')),
+    path('api/', include('ChatGPT_post.urls'))
 ]
