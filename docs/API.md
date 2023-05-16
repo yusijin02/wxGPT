@@ -17,7 +17,32 @@ http://103.143.248.145:1314/api/ChatGPT_test/
 
 
 
-## ChatGPT 调用接口
+
+
+## ChatGPT 调用接口 (POST method)
+
+http://103.143.248.145:1314/api/ChatGPT_post/
+
+#### 输入参数
+
+|         **字段**         | **值**                                                       |
+| :----------------------: | ------------------------------------------------------------ |
+|     `t`<br />(必需)      | 请求的时间戳<br />过新或过旧的时间戳将会引起 `400 TimeError` 错误<br />不携带该参数将会引起 `404 Not Found` 错误 |
+|     `k`<br />(必需)      | 您的 Key, 用于验证访问者的身份<br />**请联系开发者以获得 Key**<br />不存在的 Key 将会引起 `401 UserError` 错误<br />不携带该参数将会引起 `404 Not Found` 错误 |
+|     `s`<br />(必需)      | 加密参数<br />`k` 与 `t` 串联后的字符串做 sha256 的结果<br />错误的加密参数将会引起 `403 Forbidden` 错误<br />不携带该参数将会引起 `404 Not Found` 错误 |
+|   `model`<br />(必需)    | 采用的 OpenAI 模型<br />不携带该参数将会引起 `402` 错误      |
+|  `messages`<br />(必需)  | 向 ChatGPT 提出的信息<br />以字符串形式给出<br />串内是一个 Python 可解析的列表, 列表由多个字典组成, 这些字典表示历史对话信息, 每个字典有两个字段:<br />1.  `role` 字段: 表示该消息的角色, 可供选择: <br />- `user`: 表示用户<br />- `assistant`: 表示 ChatGPT<br />- `system`: 用于设定 ChatGPT 的行为<br />2.  `content` 字段: 表示该消息的内容 |
+| `max_tokens`<br />(可选) | 模型返回的最大 tokens 数量, 一般可以默认                     |
+
+### 输出参数
+
+一个 json 数据。
+
+
+
+
+
+## (陈旧的) ChatGPT 调用接口 (GET method)
 
 http://103.143.248.145:1314/api/ChatGPT/?t=&k=&s=&model=&messages=&max_tokens=
 
@@ -31,4 +56,6 @@ http://103.143.248.145:1314/api/ChatGPT/?t=&k=&s=&model=&messages=&max_tokens=
 |   `model`<br />(必需)    | 采用的 OpenAI 模型<br />不携带该参数将会引起 `402` 错误      |
 |  `messages`<br />(必需)  | 向 ChatGPT 提出的信息<br />以字符串形式给出<br />串内是一个 Python 可解析的列表, 列表由多个字典组成, 这些字典表示历史对话信息, 每个字典有两个字段:<br />1.  `role` 字段: 表示该消息的角色, 可供选择: <br />- `user`: 表示用户<br />- `assistant`: 表示 ChatGPT<br />- `system`: 用于设定 ChatGPT 的行为<br />2.  `content` 字段: 表示该消息的内容 |
 | `max_tokens`<br />(可选) | 模型返回的最大 tokens 数量, 一般可以默认                     |
+
+
 
