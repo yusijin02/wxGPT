@@ -22,29 +22,26 @@ def reply(msg):
     if UserType == "Baned":
         # 被禁止的用户将直接返回
         return
-    temperature = 1.0
-    model = "gpt-3.5-turbo"
-    max_tokens = 2048
-    if UserType in ["VIPUser", "Admin"]:
-        # 可以使用开发者模式
-        if text[0:2] == ":\n":
-            msg_list = text.split("\nEND;\n")
-            if len(msg_list) == 2 and msg_list[1]:
-                text = msg_list[1]
-                cmd_list = msg_list[0].split("\n")
-                for cmd in cmd_list:
-                    cmd_word_list = cmd.split(" ")
-                    if len(cmd_word_list) == 3:
-                        if cmd_word_list[0] == "SET":
-                            if cmd_word_list[1] == "temperature":
-                                temperature = float(cmd_word_list[2].replace(";", ""))
-                            if cmd_word_list[1] == "model":
-                                model = cmd_word_list[2].replace(";", "")
-                            if cmd_word_list[1] == "max_token":
-                                max_tokens = int(cmd_word_list[2].replace(";", ""))
+    # if UserType in ["VIPUser", "Admin"]:
+    #     # 可以使用开发者模式
+    #     if text[0:2] == ":\n":
+    #         msg_list = text.split("\nEND;\n")
+    #         if len(msg_list) == 2 and msg_list[1]:
+    #             text = msg_list[1]
+    #             cmd_list = msg_list[0].split("\n")
+    #             for cmd in cmd_list:
+    #                 cmd_word_list = cmd.split(" ")
+    #                 if len(cmd_word_list) == 3:
+    #                     if cmd_word_list[0] == "SET":
+    #                         if cmd_word_list[1] == "temperature":
+    #                             temperature = float(cmd_word_list[2].replace(";", ""))
+    #                         if cmd_word_list[1] == "model":
+    #                             model = cmd_word_list[2].replace(";", "")
+    #                         if cmd_word_list[1] == "max_token":
+    #                             max_tokens = int(cmd_word_list[2].replace(";", ""))
     reply = "[错误]"
     try:
-        reply = chat.chat(NickName, text, temperature=temperature, model=model, max_tokens=max_tokens)
+        reply = chat.chat(NickName, text)
     except Exception as e:
         reply = reply + str(e)
     friend.send(reply)

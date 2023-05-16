@@ -20,20 +20,60 @@ def chat(NickName, wxmsg, temperature=1.0, model="gpt-3.5-turbo", max_tokens=204
     flag, res = request_API.post_GPT(messages=message, model=model,
                                 temperature=temperature, max_tokens=max_tokens)
 
-    if flag:
-        res_dict = json.loads(res)
-        tokens_used = res_dict['res']['usage']['total_tokens']
-        text = res_dict['res']['choices'][0]['message']['content']
-        if history is None:
-            db.update(NickName, None, None, None, None, wxmsg, text)
+    try:
+        if flag:
+            res_dict = json.loads(res)
+            tokens_used = res_dict['res']['usage']['total_tokens']
+            text = res_dict['res']['choices'][0]['message']['content']
+            if history is None:
+                db.update(NickName, None, None, None, None, wxmsg, text)
+            else:
+                db.update(NickName, history[4], history[5],
+                          history[6], history[7], wxmsg, text)
+            db.add_tokens(NickName, tokens_used)
+            return text
         else:
-            db.update(NickName, history[4], history[5],
-                      history[6], history[7], wxmsg, text)
-        db.add_tokens(NickName, tokens_used)
-        return text
-    else:
-        text = "[ERROR] 发生了错误, 请稍后重试, 若多次重试均失败, 请联系维护人员.\n\n" + res
-        return text
+            text = "[ERROR] 发生了错误, 请稍后重试, 若多次重试均失败, 请联系维护人员.\n\n" + res
+            return text
+    except Exception as e:
+        if history is None:
+            text = "[ERROR] 未知错误, 联系维护人员.\n\n" + str(e)
+            return text
+        else:
+            db.update(NickName, None, None, None, None, history[6], history[7])
+            history = db.getChatHistory(NickName)
+            message = []
+            if history is not None:
+                for i in range(6):
+                    if history[i + 2] is not None:
+                        message.append({
+                            'role': 'user' if (i % 2 == 0) else 'assistant',
+                            'content': history[i + 2],
+                        })
+            message.append({
+                'role': 'user',
+                'content': wxmsg,
+            })
+
+            flag, res = request_API.post_GPT(messages=message, model=model,
+                                             temperature=temperature, max_tokens=max_tokens)
+            if flag:
+                res_dict = json.loads(res)
+                print(res_dict)
+                tokens_used = res_dict['res']['usage']['total_tokens']
+                text = res_dict['res']['choices'][0]['message']['content']
+                if history is None:
+                    db.update(NickName, None, None, None, None, wxmsg, text)
+                else:
+                    db.update(NickName, history[4], history[5],
+                              history[6], history[7], wxmsg, text)
+                db.add_tokens(NickName, tokens_used)
+                return text
+            else:
+                text = "[ERROR] 发生了错误, 请稍后重试, 若多次重试均失败, 请联系维护人员.\n\n" + res
+                return text
+
+
 
 
 def check_user(NickName):
@@ -82,3 +122,6 @@ def Admin(cmd_word):
         reply.append("出现异常\n{}".format(str(e)))
     return reply
 
+
+# if __name__ == "__main__":
+#     print(chat("光锥之外", "测试"))

@@ -127,6 +127,20 @@ def test():
 
 
 if __name__ == "__main__":
-    reset()
-    test()
-    reset()
+    # reset()
+    # test()
+    # reset()
+    history = getChatHistory("光锥之外")
+    message = []
+    if history is not None:
+        for i in range(6):
+            if history[i + 2] is not None:
+                message.append({
+                    'role': 'user' if (i % 2 == 0) else 'assistant',
+                    'content': history[i + 2],
+                })
+    message.append({
+        'role': 'user',
+        'content': "wxmsg",
+    })
+    print(message)
