@@ -1,16 +1,19 @@
 import sqlite3
+from datetime import date
+
 
 def setup():
     # 只用于设定
     conn = sqlite3.connect('./db/u.db')
     cursor = conn.cursor()
     cursor.execute("""CREATE TABLE chatHistory
-                    (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, 
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT NOT NULL, 
                     histroy_user_1 TEXT, history_assistant_1 TEXT,
                     histroy_user_2 TEXT, history_assistant_2 TEXT,
                     histroy_user_3 TEXT, history_assistant_3 TEXT)""")
     cursor.execute("""CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                      NickName TEXT NOT NULL, UserType TEXT NOT NULL, TotalToken INTEGER NOT NULL)""")
+                      UserName TEXT NOT NULL, UserType TEXT NOT NULL, TotalToken INTEGER NOT NULL, 
+                      Day INTEGER NOT NULL)""")
     conn.commit()
     conn.close()
 
@@ -28,11 +31,11 @@ def update(userName, um1=None, am1=None, um2=None, am2=None, um3=None, am3=None)
     conn = sqlite3.connect('./db/u.db')
     cursor = conn.cursor()
     # 获取该用户的历史聊天记录
-    cursor.execute("SELECT * FROM chatHistory WHERE username = ?", (userName, ))
+    cursor.execute("SELECT * FROM chatHistory WHERE userName = ?", (userName, ))
     data = cursor.fetchone()
     if data is None:
         # 没有该用户的聊天记录
-        cursor.execute("""INSERT INTO chatHistory (username, 
+        cursor.execute("""INSERT INTO chatHistory (userName, 
                                              histroy_user_1, history_assistant_1, 
                                              histroy_user_2, history_assistant_2,
                                              histroy_user_3, history_assistant_3) 
@@ -42,7 +45,7 @@ def update(userName, um1=None, am1=None, um2=None, am2=None, um3=None, am3=None)
         # 有该用户的历史聊天记录
         cursor.execute("""UPDATE chatHistory SET histroy_user_1 = ?, history_assistant_1 = ?, 
                                            histroy_user_2 = ?, history_assistant_2 = ?,
-                                           histroy_user_3 = ?, history_assistant_3 = ? WHERE username = ?""",
+                                           histroy_user_3 = ?, history_assistant_3 = ? WHERE userName = ?""",
                        (um1, am1, um2, am2, um3, am3, userName))
     conn.commit()
     conn.close()
@@ -50,19 +53,20 @@ def update(userName, um1=None, am1=None, um2=None, am2=None, um3=None, am3=None)
 def getChatHistory(userName):
     conn = sqlite3.connect('./db/u.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM chatHistory WHERE username = ?", (userName,))
+    cursor.execute("SELECT * FROM chatHistory WHERE userName = ?", (userName,))
     data = cursor.fetchone()
     conn.commit()
     conn.close()
     return data
 
 
-def add_user(NickName, UserType='User', TotalToken=0):
+def add_user(UserName, UserType='User', TotalToken=0):
+    today = date.today().day
     conn = sqlite3.connect('./db/u.db')
     cursor = conn.cursor()
-    cursor.execute("""INSERT INTO users (NickName, UserType, TotalToken)
-                      VALUES (?, ?, ?)""",
-                   (NickName, UserType, TotalToken))
+    cursor.execute("""INSERT INTO users (UserName, UserType, TotalToken, Day)
+                      VALUES (?, ?, ?, ?)""",
+                   (UserName, UserType, TotalToken, today))
     conn.commit()
     conn.close()
 
@@ -71,6 +75,13 @@ def update_user(ID, UserType):
     conn = sqlite3.connect('./db/u.db')
     cursor = conn.cursor()
     cursor.execute("""UPDATE users SET UserType = ? WHERE id= ?""", (UserType, ID))
+    conn.commit()
+    conn.close()
+    
+def update_date(ID, Day):
+    conn = sqlite3.connect('./db/u.db')
+    cursor = conn.cursor()
+    cursor.execute("""UPDATE users SET Day = ? WHERE id= ?""", (Day, ID))
     conn.commit()
     conn.close()
 
@@ -92,17 +103,17 @@ def print_users():
     conn.close()
     return result
 
-def add_tokens(NickName, tokens):
+def add_tokens(UserName, tokens):
     conn = sqlite3.connect('./db/u.db')
     cursor = conn.cursor()
-    cursor.execute(f"""UPDATE users SET TotalToken = TotalToken + {tokens} WHERE NickName = ?""", (NickName, ))
+    cursor.execute(f"""UPDATE users SET TotalToken = TotalToken + {tokens} WHERE UserName = ?""", (UserName, ))
     conn.commit()
     conn.close()
 
-def get_user(NickName):
+def get_user(UserName):
     conn = sqlite3.connect('./db/u.db')
     cursor = conn.cursor()
-    cursor.execute("""SELECT * FROM users WHERE NickName = ?""", (NickName, ))
+    cursor.execute("""SELECT * FROM users WHERE UserName = ?""", (UserName, ))
     data = cursor.fetchone()
     conn.commit()
     conn.close()
@@ -127,20 +138,6 @@ def test():
 
 
 if __name__ == "__main__":
-    # reset()
-    # test()
-    # reset()
-    history = getChatHistory("光锥之外")
-    message = []
-    if history is not None:
-        for i in range(6):
-            if history[i + 2] is not None:
-                message.append({
-                    'role': 'user' if (i % 2 == 0) else 'assistant',
-                    'content': history[i + 2],
-                })
-    message.append({
-        'role': 'user',
-        'content': "wxmsg",
-    })
-    print(message)
+    reset()
+    test()
+    reset()

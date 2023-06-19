@@ -68,10 +68,10 @@ class ChatGPT:
         for _ in range(self._retry):
             try:
                 res = requests.post(u, json=data, proxies=self._proxy, timeout=self._timeout)
-                return res.text
+                return True, res.text
             except Exception as e:
                 self.log("[ERROR]" + str(e))
-        return str(e)
+        return False, str(e)
     
     def add_system_prompt(self, msg):
         self._set_msg("system", msg)
