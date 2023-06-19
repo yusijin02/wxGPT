@@ -10,19 +10,19 @@ class DataBase:
         self._cursor = self._conn.cursor()
         
     def get_history(self, UserName):
-        CMD = f"""SELECT (user1, ai1, user2, ai2, user3, ai3) FROM {self._tableName} WHERE UserName = {UserName}"""
+        CMD = f"""SELECT user1, ai1, user2, ai2, user3, ai3 FROM {self._tableName} WHERE UserName = '{UserName}'"""
         data = self._fetch(CMD)
         return data
     
     def delete_history(self, UserName, num=1):
         if num == 1:  # 删除一条历史记录
-            CMD = f"""UPDATE {self._tableName} SET user3 = NULL, ai3 = NULL WHERE UserName = {UserName}"""
+            CMD = f"""UPDATE {self._tableName} SET user3 = NULL, ai3 = NULL WHERE UserName = '{UserName}'"""
         elif num == 2:  # 删除两条历史记录
             CMD = f"""UPDATE {self._tableName} SET user2 = NULL, ai2 = NULL, user3 = NULL, ai3 = NULL 
-            WHERE UserName = {UserName}"""
+            WHERE UserName = '{UserName}'"""
         else:  # 删除所有历史记录
             CMD = f"""UPDATE {self._tableName} SET user1 = NULL, ai1 = NULL, user2 = NULL, ai2 = NULL, user3 = NULL, ai3 = NULL 
-            WHERE UserName = {UserName}"""
+            WHERE UserName = '{UserName}'"""
         self._fetch(CMD, "zero")
         
     def update_history(self, UserName, user, ai):
@@ -30,8 +30,8 @@ class DataBase:
         if not _hty:  # 如果没有历史记录, 容易产生bug
             return
         user1, ai1, user2, ai2 = _hty[0], _hty[1], _hty[2], _hty[3]
-        CMD = f"""UPDATE {self._tableName} SET user1 = {user}, ai1 = {ai}, 
-        user2 = {user1}, ai2 = {ai1}, user3 = {user2}, ai3 = {ai2} WHERE UserName = {UserName}"""
+        CMD = f"""UPDATE {self._tableName} SET user1 = '{user}', ai1 = '{ai}', 
+        user2 = '{user1}', ai2 = '{ai1}', user3 = '{user2}', ai3 = '{ai2}' WHERE UserName = '{UserName}'"""
         self._fetch(CMD, "zero")    
         
     def add_user(self, UserName):
@@ -39,8 +39,8 @@ class DataBase:
         UserType = "User"
         TotalToken = 0
         Mod = "Chat"
-        CMD = f"""INSERT INTO {self._tableName} (UserName, UserType, TotalToken, Day, Mod) VALUES 
-        ('{UserName}', '{UserType}', {TotalToken}, {day}, '{Mod}')"""
+        CMD = f"""INSERT INTO {self._tableName} (UserName, UserType, TotalToken, Day, Mod, user1, ai1, user2, ai2, user3, ai3) VALUES 
+        ('{UserName}', '{UserType}', {TotalToken}, {day}, '{Mod}', NULL, NULL, NULL, NULL, NULL, NULL)"""
         self._fetch(CMD, "zero")
     
     def setup(self):
@@ -76,4 +76,6 @@ class DataBase:
 if __name__ == "__main__":
     print("Testing: DataBase.py")
     d = DataBase()
-    d.add_user("yusijin")
+    # d.add_user("2")
+    d.update_history("2", "user said", "ai said")
+    print(d.get_history("2"))
