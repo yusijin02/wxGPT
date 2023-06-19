@@ -1,13 +1,14 @@
 import sqlite3
+from datetime import date
 
 class DataBase:
     def __init__(self):
-        self._path = ".db/user.db"
+        self._path = "./db/user.db"
+
         self._tableName = "users"
-        conn = sqlite3.connect(self._path)
-        self.cursor = conn.cursor()
+        self._conn = sqlite3.connect(self._path)
+        self._cursor = self._conn.cursor()
         
-    
     def get_history(self, UserName):
         CMD = f"""SELECT (user1, ai1, user2, ai2, user3, ai3) FROM {self._tableName} WHERE UserName = {UserName}"""
         data = self._fetch(CMD)
@@ -20,11 +21,29 @@ class DataBase:
             CMD = f"""UPDATE {self._tableName} SET user2 = NULL, ai2 = NULL, user3 = NULL, ai3 = NULL 
             WHERE UserName = {UserName}"""
         else:  # 删除所有历史记录
-            CMD = f"""UPDATE {self._tableName} SET user1 = NULL, ai1 = NUL, user2 = NULL, ai2 = NULL, user3 = NULL, ai3 = NULL 
+            CMD = f"""UPDATE {self._tableName} SET user1 = NULL, ai1 = NULL, user2 = NULL, ai2 = NULL, user3 = NULL, ai3 = NULL 
             WHERE UserName = {UserName}"""
         self._fetch(CMD, "zero")
+        
+    def update_history(self, UserName, user, ai):
+        _hty = self.get_history(UserName)
+        if not _hty:  # 如果没有历史记录, 容易产生bug
+            return
+        user1, ai1, user2, ai2 = _hty[0], _hty[1], _hty[2], _hty[3]
+        CMD = f"""UPDATE {self._tableName} SET user1 = {user}, ai1 = {ai}, 
+        user2 = {user1}, ai2 = {ai1}, user3 = {user2}, ai3 = {ai2} WHERE UserName = {UserName}"""
+        self._fetch(CMD, "zero")    
+        
+    def add_user(self, UserName):
+        day = date.today().day
+        UserType = "User"
+        TotalToken = 0
+        Mod = "Chat"
+        CMD = f"""INSERT INTO {self._tableName} (UserName, UserType, TotalToken, Day, Mod) VALUES 
+        ('{UserName}', '{UserType}', {TotalToken}, {day}, '{Mod}')"""
+        self._fetch(CMD, "zero")
     
-    def _setup(self):
+    def setup(self):
         SETUP = f"""CREATE TABLE {self._tableName} (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         UserName TEXT NOT NULL, 
@@ -40,16 +59,21 @@ class DataBase:
         ai3 TEXT
         )"""
         # 1是最新的聊天记录, 3是最旧的聊天记录
-        self.cursor.execute(SETUP)
+        self._cursor.execute(SETUP)
     
     def _fetch(self, CMD, mod="one"):
-        self.cursor.execute(CMD)
+        self._cursor.execute(CMD)
+        self._conn.commit()
         if mod == "one":  # 查找一条数据
-            data = self.cursor.fetchone()
+            data = self._cursor.fetchone()
         elif mod == "all":  # 查找多条数据
-            data = self.cursor.fetchall()
+            data = self._cursor.fetchall()
         else:
             return None
         return data
     
-    
+
+if __name__ == "__main__":
+    print("Testing: DataBase.py")
+    d = DataBase()
+    d.add_user("yusijin")
