@@ -62,7 +62,7 @@ def post_GPT(
             return True, res.text
         except Exception as e:
             log("[ERROR]" + str(e))
-            return False, str(e)
+    return False, str(e)
 
 def test():
     flag, res = get_GPT()
