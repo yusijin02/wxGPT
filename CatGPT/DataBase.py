@@ -75,12 +75,22 @@ class DataBase:
             return
         self._fetch(CMD, "zero")
     
-    def get_user(self, ID=None):
+    def get_user_by_ID(self, ID=None):
         # 查找用户
         # Input: ID, int, 用户ID
-        # Output: 元组
+        # Output: 元组的列表
         if ID:
             CMD = f"""SELECT * FROM {self._tableName} WHERE ID = {ID}"""
+        else:
+            CMD = f"""SELECT * FROM {self._tableName}"""
+        return self._fetch(CMD, "all")
+    
+    def get_user_by_userName(self, UserName=None):
+        # 查找用户
+        # Input: UserName, int, 用户名
+        # Output: 元组的列表
+        if UserName:
+            CMD = f"""SELECT * FROM {self._tableName} WHERE UserName = '{UserName}'"""
         else:
             CMD = f"""SELECT * FROM {self._tableName}"""
         return self._fetch(CMD, "all")
