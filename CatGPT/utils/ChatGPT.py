@@ -1,5 +1,6 @@
 import hashlib
 import time
+import json
 import requests
 
 class ChatGPT:
@@ -16,8 +17,25 @@ class ChatGPT:
         
         self._proxy = None
         self.log = print
+        self._json = None
         
+        self.code = 400
+        self.state = "Not Recived"
+        self._dic_res = None
+        self.id = None
+        self.object = None
+        self.created = None
+        self.model = None  # ChatGPT回复的json数据的字段
+        self.usage = None
+        self.total_tokens = None
+        self.reply = None
         
+    def run(self):
+        if self._get_reply():
+            self._json2text()
+            return True if self.reply else False
+        return False
+    
     
     def _set_msg(self, role, content):
         self._message.append({"role": role, "content": content})
@@ -52,7 +70,7 @@ class ChatGPT:
     def set_proxy(self, proxy):
         self._proxy = proxy
     
-    def run(self):
+    def _get_reply(self):
         self._t = time.time()
         self._s = self._get_s()
         data = {
@@ -67,11 +85,11 @@ class ChatGPT:
         u = "http://103.143.248.145:1314/api/ChatGPT_post/"
         for _ in range(self._retry):
             try:
-                res = requests.post(u, json=data, proxies=self._proxy, timeout=self._timeout)
-                return True, res.text
+                self._json = requests.post(u, json=data, proxies=self._proxy, timeout=self._timeout).text
+                return True
             except Exception as e:
-                self.log("[ERROR]" + str(e))
-        return False, str(e)
+                self.log(str(e))
+        return False
     
     def add_system_prompt(self, msg):
         self._set_msg("system", msg)
@@ -85,10 +103,28 @@ class ChatGPT:
         
     def get_message(self):
         return self._message
+    
+    def _json2text(self):
+        _dic = json.loads(self._json)
+        try:
+            self.code = int(_dic["code"])
+            self.state = _dic["state"]
+            self._dic_res = _dic["res"]
+            self.id = self._dic_res["id"]
+            self.object = self._dic_res["object"]
+            self.created = self._dic_res["created"]
+            self.model = self._dic_res["model"]
+            self.usage = self._dic_res["usage"]
+            self.total_tokens = self.usage["total_tokens"]
+            self.reply = self._dic_res["choices"][0]["message"]["content"]
+        except Exception as e:
+            self.log(str(e))
+            
         
         
 if __name__ == '__main__':
-    print("Testing: ChatGPT.py")
+    print("Testing: utils.ChatGPT.py")
     c = ChatGPT()
     c.add_question("Please introduce yourself.")
     print(c.run())
+    print(c.reply)

@@ -3,7 +3,7 @@ from datetime import date
 
 class DataBase:
     def __init__(self):
-        self._path = "./db/user.db"
+        self._path = r"../db/user.db"
 
         self._tableName = "users"
         self._conn = sqlite3.connect(self._path)
@@ -140,6 +140,7 @@ class DataBase:
 
 if __name__ == "__main__":
     print("Testing: DataBase.py")
-    # d = DataBase()
-    # print(d.get_user(3))
+    d = DataBase()
+    d.add_user("yusijin")
+    print(d.get_user_by_userName("yusijin"))
     # d.reset()
