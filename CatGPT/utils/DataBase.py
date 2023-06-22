@@ -140,7 +140,24 @@ class DataBase:
 
 if __name__ == "__main__":
     print("Testing: DataBase.py")
-    d = DataBase()
-    d.add_user("yusijin")
-    print(d.get_user_by_userName("yusijin"))
-    # d.reset()
+    #############################
+    # Demo: DataBase
+    #############################
+    # 请确保 CatGPT/db/user.db 文件存在
+    db = DataBase()  # 声明一个DataBase类对象db
+    # db.setup()  # 创建一个新表, 若已有表则不执行
+    userName = "testUser"  # 用户名
+    # db.add_user(userName)  # 添加一个用户, 若已有该用户则不执行
+    user, ai = "Hello, I am testUser.", "Hello, I am CatGPT"  # 对话记录
+    db.update_history(userName, user, ai)  # 更新记录
+    _print = db.get_user_by_userName(userName)  # 查找用户
+    print(_print)
+    id = _print[0][0]  # 用户ID
+    _print = db.get_user_by_ID(id)
+    print(_print)
+    user, ai = "你好", "你好"
+    db.update_history(userName, user, ai)  # 更新记录
+    print(db.get_user_by_ID(id))
+    
+    
+    
