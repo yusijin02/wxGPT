@@ -1,5 +1,8 @@
-from utils.DataBase import DataBase
+from DataBase import DataBase
+import sys
+sys.path.append("..")
 from Mods.Chat import Chat
+import content.text as TEXE
 
 
 class ListeningMessages:
@@ -51,10 +54,7 @@ class ListeningMessages:
             self.reply = self._mod_Default()
     
     def _mod_Banned(self):
-        return """##########
-系统消息. CatGPT不会看到本条信息
-##########
-[错误]你的用户已停止使用CatGPT, 详情请联系维护人员."""
+        return TEXE.Error_userBanned
     
     def _mod_Chat(self):
         _chat = Chat(self.userName, self.mesgText)
@@ -64,38 +64,22 @@ class ListeningMessages:
 ##########
 {_chat.reply}"""
         else:
-            return """##########
-系统消息. CatGPT不会看到本条信息
-##########
-[错误]CatGPT没有回复正确的信息. 错误代码: 40002.
-可能造成错误的原因:
-1. 网络状况不佳.
-2. 当前使用CatGPT人数过多.
-3. 您发送的信息过长, 或CatGPT的回复信息过长.
-==========
-您与CatGPT的历史聊天记录将被删除, 请您稍后重试. 若多次重试均无效, 请及时联系维护人员."""
+            return TEXE.Error_ChatMod
             
     def _mod_Default(self):
         _chat = Chat(self.userName, self.mesgText)
         if _chat.run():
             return _chat.reply
         else:
-            return """##########
-系统消息. CatGPT不会看到本条信息
-##########
-[错误]CatGPT没有回复正确的信息. 错误代码: 40002.
-可能造成错误的原因:
-1. 网络状况不佳.
-2. 当前使用CatGPT人数过多.
-3. 您发送的信息过长, 或CatGPT的回复信息过长.
-==========
-您与CatGPT的历史聊天记录将被删除, 请您稍后重试. 若多次重试均无效, 请及时联系维护人员."""           
+            return TEXE.Error_DefaultMod          
     
 class ListeningCommands:
     def __init__(self, userName, mesgText, userType="friend"):
         self.userName = userName
         self.mesgText = mesgText
+        self.userType = userType
         self._get_command()
+        self.reply = None
         
     def _get_command(self):
         try:
@@ -103,6 +87,12 @@ class ListeningCommands:
             self.command = _list[1]
         except:
             self.command = None
+    
+    def _help(self):
+        self.reply = TEXE.Help
+    
+    def _help_PromptMod(self):
+        pass
 
 
 if __name__ == '__main__':
